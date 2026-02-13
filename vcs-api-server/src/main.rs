@@ -6,7 +6,7 @@ use tokio::net::TcpListener;
 async fn main() {
     let app = Router::new()
         .route("/", get(root))
-        .route("/github", axum::routing::post(webhook));
+        .route("/github", axum::routing::post(github_webhook));
 
     let listener = TcpListener::bind("0.0.0.0:8001").await.unwrap();
     axum::serve(listener, app).await.unwrap();
@@ -16,7 +16,7 @@ async fn root() -> &'static str {
     "Hello, World!"
 }
 
-async fn webhook(Json(payload): Json<Value>) -> Json<Value> {
+async fn github_webhook(Json(payload): Json<Value>) -> Json<Value> {
     println!("{}", serde_json::to_string_pretty(&payload).unwrap());
     Json(payload)
 }
